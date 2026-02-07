@@ -6,15 +6,15 @@ A robust JavaScript utility that converts LaTeX mathematical expressions into Ma
 
 ## 📋 Table of Contents
 
-- [Features](#features)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Supported LaTeX Commands](#supported-latex-commands)
-- [How It Works](#how-it-works)
-- [Examples](#examples)
-- [Contributing](#contributing)
-- [License](#license)
-- [Star the Repository](#star-the-repository)
+- [Features](#-features)
+- [Installation](#-installation)
+- [Usage](#-usage)
+- [Supported LaTeX Commands](#-supported-latex-commands)
+- [How It Works](#-how-it-works)
+- [Examples](#-examples)
+- [Contributing](#-contributing)
+- [License](#-license)
+- [Star the Repository](#-star-the-repository)
 
 ## ✨ Features
 
