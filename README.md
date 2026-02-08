@@ -269,21 +269,6 @@ We welcome contributions! If you find any bugs or have suggestions for improveme
 - More comprehensive test coverage
 - Documentation improvements
 
-## 📄 License
-
-**MIT License**
-
-Copyright (c) 2024
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-**THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.**
-
-### Educational Use
-This software is free for everyone to use, including for **educational purposes**. Teachers, students, researchers, and educational institutions are encouraged to use, modify, and distribute this software in accordance with the MIT License.
-
 ## ⭐ Star the Repository
 
 If you find this project useful, please consider giving it a star on GitHub! It helps others discover the project and motivates continued development.
