@@ -273,7 +273,7 @@ We welcome contributions! If you find any bugs or have suggestions for improveme
 
 If you find this project useful, please consider giving it a star on GitHub! It helps others discover the project and motivates continued development.
 
-**[⭐ Star this repository](https://github.com/SENODROOM/LaTeX-To-MathJs)** _(Replace with your actual repository URL)_
+**[⭐ Star this repository](https://github.com/SENODROOM/LaTeX-To-MathJs)** 
 
 ---
 
