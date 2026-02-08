@@ -24,6 +24,23 @@ export const latexToMathJs = (latex) => {
     expr = expr.replace(/\\sqrt\[([^\]]+)\]\{([^}]+)\}/g, '(($2)^(1/($1)))');
     expr = expr.replace(/\\sqrt\{([^}]+)\}/g, '(sqrt($1))');
 
+    // **CRITICAL: Handle inverse trig with arguments BEFORE converting to short forms**
+    // Handle patterns like \tan^{-1}xyz or \sin^{-1}abc
+    expr = expr.replace(/\\tan\^\{-1\}\s*([a-zA-Z]+)/g, (match, vars) => {
+        return 'atan(' + vars.split('').join('*') + ')';
+    });
+    expr = expr.replace(/\\sin\^\{-1\}\s*([a-zA-Z]+)/g, (match, vars) => {
+        return 'asin(' + vars.split('').join('*') + ')';
+    });
+    expr = expr.replace(/\\cos\^\{-1\}\s*([a-zA-Z]+)/g, (match, vars) => {
+        return 'acos(' + vars.split('').join('*') + ')';
+    });
+
+    // Handle inverse trig with explicit arguments in braces
+    expr = expr.replace(/\\tan\^\{-1\}\{([^}]+)\}/g, 'atan($1)');
+    expr = expr.replace(/\\sin\^\{-1\}\{([^}]+)\}/g, 'asin($1)');
+    expr = expr.replace(/\\cos\^\{-1\}\{([^}]+)\}/g, 'acos($1)');
+
     // Handle inverse trig BEFORE regular trig (order matters!)
     expr = expr.replace(/\\arctan/g, 'atan');
     expr = expr.replace(/\\arcsin/g, 'asin');
@@ -32,23 +49,15 @@ export const latexToMathJs = (latex) => {
     expr = expr.replace(/\\sin\^\{-1\}/g, 'asin');
     expr = expr.replace(/\\cos\^\{-1\}/g, 'acos');
 
-    // Handle reciprocal trig functions with arguments
-    expr = expr.replace(/\\sec\{([^}]+)\}/g, '(1/cos($1))');
-    expr = expr.replace(/\\csc\{([^}]+)\}/g, '(1/sin($1))');
-    expr = expr.replace(/\\cot\{([^}]+)\}/g, '(1/tan($1))');
-    expr = expr.replace(/\\sec\(/g, '(1/cos(');
-    expr = expr.replace(/\\csc\(/g, '(1/sin(');
-    expr = expr.replace(/\\cot\(/g, '(1/tan(');
-
-    // Handle reciprocal trig with space and variable
-    expr = expr.replace(/\\sec\s+([a-zA-Z])/g, '(1/cos($1))');
-    expr = expr.replace(/\\csc\s+([a-zA-Z])/g, '(1/sin($1))');
-    expr = expr.replace(/\\cot\s+([a-zA-Z])/g, '(1/tan($1))');
-
-    // Handle regular trig functions
+    // Handle regular trig functions (but NOT reciprocal trig yet!)
     expr = expr.replace(/\\tan/g, 'tan');
     expr = expr.replace(/\\sin/g, 'sin');
     expr = expr.replace(/\\cos/g, 'cos');
+
+    // Replace \sec, \csc, \cot with temporary placeholders
+    expr = expr.replace(/\\sec/g, 'SEC');
+    expr = expr.replace(/\\csc/g, 'CSC');
+    expr = expr.replace(/\\cot/g, 'COT');
 
     // IMPORTANT: Handle trig functions with space and variable BEFORE removing spaces
     expr = expr.replace(/tan\s+([a-zA-Z])/g, 'tan($1)');
@@ -57,29 +66,37 @@ export const latexToMathJs = (latex) => {
     expr = expr.replace(/atan\s+([a-zA-Z])/g, 'atan($1)');
     expr = expr.replace(/asin\s+([a-zA-Z])/g, 'asin($1)');
     expr = expr.replace(/acos\s+([a-zA-Z])/g, 'acos($1)');
+    expr = expr.replace(/SEC\s+([a-zA-Z])/g, 'SEC($1)');
+    expr = expr.replace(/CSC\s+([a-zA-Z])/g, 'CSC($1)');
+    expr = expr.replace(/COT\s+([a-zA-Z])/g, 'COT($1)');
     expr = expr.replace(/log\s+([a-zA-Z])/g, 'log($1)');
     expr = expr.replace(/log10\s+([a-zA-Z])/g, 'log10($1)');
     expr = expr.replace(/sqrt\s+([a-zA-Z])/g, 'sqrt($1)');
     expr = expr.replace(/exp\s+([a-zA-Z])/g, 'exp($1)');
     expr = expr.replace(/abs\s+([a-zA-Z])/g, 'abs($1)');
 
+    // **NEW: Handle trig functions followed by numbers and variables (e.g., cos2x, sin3y)**
+    expr = expr.replace(/(sin|cos|tan|asin|acos|atan|SEC|CSC|COT)([0-9]+)([a-zA-Z]+)/g, '$1($2*$3)');
+    expr = expr.replace(/(sin|cos|tan|asin|acos|atan|SEC|CSC|COT)([0-9]+)/g, '$1($2)');
+
     // Handle logarithms
     expr = expr.replace(/\\ln/g, 'log');
     expr = expr.replace(/\\log/g, 'log10');
-
-    // Handle exponentials and powers
-    expr = expr.replace(/\\exp\{([^}]+)\}/g, 'exp($1)');
-    // Handle e^{...} before general powers
-    expr = expr.replace(/e\^\{([^}]+)\}/g, 'exp($1)');
-    // Handle general powers with braces - ADD IMPLICIT MULTIPLICATION HERE
-    expr = expr.replace(/([a-zA-Z0-9]+)\^\{([^}]+)\}/g, '($1^($2))');
-    // Handle simple powers without braces (e.g., x^2)
-    expr = expr.replace(/([a-zA-Z0-9]+)\^([a-zA-Z0-9])/g, '($1^$2)');
 
     // Handle constants
     expr = expr.replace(/\\pi/g, 'pi');
     expr = expr.replace(/\\e(?![a-zA-Z])/g, 'e');
     expr = expr.replace(/\\infty/g, 'Infinity');
+
+    // **CRITICAL: Handle function^power variable patterns BEFORE general power handling**
+    // This catches patterns like sin^2 x, cos^2 y, SEC^2 z, etc.
+    expr = expr.replace(/(sin|cos|tan|asin|acos|atan|SEC|CSC|COT)\^([0-9]+)\s*([a-zA-Z])/g, '($1($3)^$2)');
+    expr = expr.replace(/(sin|cos|tan|asin|acos|atan|SEC|CSC|COT)\^\{([^}]+)\}\s*([a-zA-Z])/g, '($1($3)^($2))');
+
+    // NOW convert SEC, CSC, COT to their reciprocal forms
+    expr = expr.replace(/SEC\(([^)]+)\)/g, '(1/cos($1))');
+    expr = expr.replace(/CSC\(([^)]+)\)/g, '(1/sin($1))');
+    expr = expr.replace(/COT\(([^)]+)\)/g, '(1/tan($1))');
 
     // Handle brackets and braces
     expr = expr.replace(/\\left\(/g, '(');
@@ -94,6 +111,15 @@ export const latexToMathJs = (latex) => {
     expr = expr.replace(/\\times/g, '*');
     expr = expr.replace(/\\div/g, '/');
     expr = expr.replace(/\\pm/g, '+');
+
+    // Handle exponentials and powers
+    expr = expr.replace(/\\exp\{([^}]+)\}/g, 'exp($1)');
+    // Handle e^{...} before general powers
+    expr = expr.replace(/e\^\{([^}]+)\}/g, 'exp($1)');
+    // Handle general powers with braces
+    expr = expr.replace(/([a-zA-Z0-9]+)\^\{([^}]+)\}/g, '($1^($2))');
+    // Handle simple powers without braces (e.g., x^2)
+    expr = expr.replace(/([a-zA-Z0-9]+)\^([a-zA-Z0-9])/g, '($1^$2)');
 
     // IMPORTANT: Handle implicit multiplication BEFORE converting braces to parens
     // This preserves the structure and prevents )(  patterns
