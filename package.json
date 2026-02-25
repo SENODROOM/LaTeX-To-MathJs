@@ -1,6 +1,7 @@
 {
   "name": "crosstex",
   "version": "1.0.0",
+  "types": "index.d.ts",
   "description": "A robust JavaScript utility that converts LaTeX mathematical expressions into Math.js compatible syntax. This converter handles a wide range of mathematical notation including fractions, roots, trigonometric functions, logarithms, and complex nested expressions.",
   "main": "LatexToMathJs.js",
   "scripts": {
